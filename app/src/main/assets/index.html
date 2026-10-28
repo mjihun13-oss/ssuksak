@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
+<title>쓱싹</title>
+<style>
+:root{--bg:#f4f7f6;--card:#fff;--ink:#12201d;--sub:#5b6b66;--line:#e0e7e4;--accent:#0f9d8a;--accent-ink:#fff;--accent-soft:#dff5f1;--warn:#e8590c;--danger:#d6336c}
+@media(prefers-color-scheme:dark){:root{--bg:#0d1413;--card:#16201e;--ink:#e8f1ee;--sub:#93a69f;--line:#25322e;--accent:#2dd4bf;--accent-ink:#04201c;--accent-soft:#12302b}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,Roboto,"Noto Sans KR","Apple SD Gothic Neo",sans-serif;font-size:16px;line-height:1.45}
+#app{max-width:720px;margin:0 auto;padding:16px 16px calc(96px + env(safe-area-inset-bottom))}
+h1{font-size:24px;margin:8px 0 2px;letter-spacing:-.5px}
+h2{font-size:18px;margin:22px 0 10px}
+.sub{color:var(--sub);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.hero{text-align:center;padding:24px 16px}
+.big{font-size:44px;font-weight:800;letter-spacing:-1.5px;color:var(--accent);line-height:1.1}
+.btn{appearance:none;border:0;background:var(--accent);color:var(--accent-ink);font:inherit;font-weight:700;padding:13px 18px;border-radius:12px;width:100%;margin-top:10px}
+.btn.alt{background:var(--accent-soft);color:var(--accent)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn.danger{background:var(--danger);color:#fff}
+.btn.sm{width:auto;padding:8px 12px;font-size:14px;margin:0}
+.btn:disabled{opacity:.45}
+.row{display:flex;gap:10px;align-items:center}
+.row.wrap{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.sug{display:flex;gap:12px;align-items:center}
+.sug .ic{font-size:28px;width:48px;height:48px;border-radius:14px;background:var(--accent-soft);display:grid;place-items:center;flex:none}
+.sug b{display:block}
+.chev{color:var(--sub);font-size:20px}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:10px}
+.bar>i{display:block;height:100%;width:0;background:var(--accent);transition:width .15s}
+.note{font-size:13px;color:var(--sub);background:var(--accent-soft);border-radius:12px;padding:10px 12px;margin-top:12px}
+.note.warn{background:rgba(232,89,12,.12);color:var(--warn)}
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:5}
+.tabs button{flex:1;border:0;background:none;color:var(--sub);font:inherit;font-size:12px;padding:10px 0 8px}
+.tabs button span{display:block;font-size:22px;line-height:1.1}
+.tabs button.on{color:var(--accent);font-weight:700}
+.top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.back{border:1px solid var(--line);background:var(--card);color:var(--ink);width:38px;height:38px;border-radius:12px;font-size:18px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+@media(min-width:520px){.grid{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:700px){.grid{grid-template-columns:repeat(5,1fr)}}
+.cell{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--line);border:3px solid transparent}
+.cell.on{border-color:var(--accent)}
+.cell img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.cell .fallback,.fb{display:grid;place-items:center;width:100%;height:100%;font-size:30px}
+.cell .ck{position:absolute;top:5px;right:5px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.35);border:2px solid #fff;display:grid;place-items:center;color:#fff;font-size:13px;font-weight:800}
+.cell.on .ck{background:var(--accent);color:var(--accent-ink)}
+.cell .sz{position:absolute;left:0;right:0;bottom:0;padding:12px 5px 3px;background:linear-gradient(transparent,rgba(0,0,0,.65));color:#fff;font-size:11px}
+.cell .tag{position:absolute;left:5px;top:5px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;padding:1px 6px;border-radius:99px}
+.actbar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));z-index:6}
+.actbar .in{max-width:720px;margin:0 auto}
+.chat{display:flex;flex-direction:column;gap:10px}
+.msg{max-width:88%;padding:10px 13px;border-radius:16px;white-space:pre-wrap}
+.msg.bot{background:var(--card);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}
+.msg.me{background:var(--accent);color:var(--accent-ink);align-self:flex-end;border-bottom-right-radius:4px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:6px 0}
+.chips button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 12px;border-radius:99px;font:inherit;font-size:14px}
+.inp{display:flex;gap:8px;position:sticky;bottom:calc(64px + env(safe-area-inset-bottom));padding-top:8px;background:var(--bg)}
+.inp input{flex:1;min-width:0;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;padding:12px 14px;border-radius:12px}
+select{font:inherit;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px}
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.5);display:grid;place-items:center;padding:20px;z-index:20}
+.modal{background:var(--card);border-radius:18px;padding:20px;max-width:420px;width:100%;border:1px solid var(--line)}
+.modal h3{margin:0 0 8px}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:99px;font-size:14px;z-index:30;max-width:90%}
+.tr{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.tr:last-child{border:0}
+.tr .th{width:48px;height:48px;border-radius:10px;overflow:hidden;background:var(--line);flex:none}
+.tr .th img{width:100%;height:100%;object-fit:cover}
+.tr .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+'use strict';
+/* ========= 기본 ========= */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const A = window.Android;
+const SENS = { strict: 30, normal: 60, loose: 110 };
+function fmt(b){ if(b<1024) return b+'B'; const u=['KB','MB','GB','TB']; let i=-1; do{ b/=1024; i++; }while(b>=1024&&i<3); return (b>=100?b.toFixed(0):b.toFixed(1))+u[i]; }
+function ago(ts){ const d=Math.floor((Date.now()-ts)/864e5); return d<1?'오늘':d<30?d+'일 전':d<365?Math.floor(d/30)+'개월 전':Math.floor(d/365)+'년 전'; }
+function nat(fn, ...a){ try{ return A[fn](...a); }catch(e){ toast('앱 연결 오류: '+fn); return null; } }
+
+const state = {
+  perm:false, items:[], cats:{}, scanned:false, scanning:false, stale:false,
+  view:'home', tab:'home', cat:null, sel:new Set(), limit:120,
+  trash:null, msgs:[], prog:{label:'',done:0,total:0}, bk:'', pendingBackup:false, storage:null,
+  settings:{ sens:'normal', largeMB:50, shotDays:30 }
+};
+try{ Object.assign(state.settings, JSON.parse(localStorage.getItem('ssuk.settings')||'{}')); }catch(e){}
+const S = () => ({ blur:SENS[state.settings.sens]||60, largeMB:+state.settings.largeMB||50, shotDays:+state.settings.shotDays||30 });
+function saveSettings(){ try{ localStorage.setItem('ssuk.settings', JSON.stringify(state.settings)); }catch(e){} }
+
+/* ========= 카테고리 ========= */
+const CATS = [
+  { id:'dup',  icon:'👯', title:'비슷한 사진', desc:'거의 같은 사진 중 용량이 가장 큰 한 장만 남기고 나머지', act:'trash', test:i=>i.dupDrop, pre:()=>true },
+  { id:'blur', icon:'🌫️', title:'흔들린 사진', desc:'초점이 맞지 않거나 흔들린 사진', act:'trash', test:(i,s)=>i.kind==='image'&&!i.shot&&i.lap!=null&&i.lap<s.blur&&!(i.bright<25), pre:()=>true },
+  { id:'shot', icon:'📱', title:'스크린샷', desc:'오래된 순 · 기본 선택은 설정한 기간이 지난 것', act:'trash', test:i=>i.shot, pre:(i,s)=>Date.now()-i.mtime>s.shotDays*864e5 },
+  { id:'dark', icon:'🌑', title:'너무 어두운 사진', desc:'거의 검게 찍힌 사진', act:'trash', test:i=>i.kind==='image'&&i.bright!=null&&i.bright<25, pre:()=>true },
+  { id:'large',icon:'🎞️', title:'용량 큰 파일', desc:'백업 폴더에 복사한 뒤 정리해요 · 직접 골라주세요', act:'backup', test:(i,s)=>i.size>=s.largeMB*1048576, pre:()=>false },
+];
+const catDef = id => CATS.find(c=>c.id===id);
+const sumSize = l => l.reduce((a,i)=>a+i.size,0);
+
+/* ========= 분류 · 중복 탐지 ========= */
+const pc = x => { x = x - ((x>>>1)&0x55555555); x = (x&0x33333333)+((x>>>2)&0x33333333); return Math.imul((x+(x>>>4))&0x0f0f0f0f,0x01010101)>>>24; };
+const ham = (a,b) => pc((a[0]^b[0])>>>0) + pc((a[1]^b[1])>>>0);
+const byteOf = (h,k) => k<4 ? (h[0]>>>(24-8*k))&255 : (h[1]>>>(24-8*(k-4)))&255;
+
+function findDups(){
+  state.items.forEach(i=>{ i.dupDrop=false; i.keeper=null; });
+  const arr = state.items.filter(i=>i.hash&&i.ar);
+  const p = arr.map((_,i)=>i);
+  const find = x=>{ while(p[x]!==x){ p[x]=p[p[x]]; x=p[x]; } return x; };
+  // 해밍거리 ≤ 6 이면 64bit 중 8개 바이트 블록 중 최소 2개는 동일 → 블록별 버킷으로 후보만 비교
+  const buckets = new Map();
+  arr.forEach((it,idx)=>{ for(let k=0;k<8;k++){ const key=k*256+byteOf(it.hash,k); let l=buckets.get(key); if(!l) buckets.set(key,l=[]); l.push(idx); } });
+  buckets.forEach(l=>{
+    for(let a=0;a<l.length;a++){
+      const X=arr[l[a]];
+      for(let b=a+1;b<l.length;b++){
+        const Y=arr[l[b]];
+        if(Math.abs(X.ar-Y.ar)>0.05) continue;
+        if(ham(X.hash,Y.hash)<=6){ const ra=find(l[a]), rb=find(l[b]); if(ra!==rb) p[rb]=ra; }
+      }
+    }
+  });
+  const groups = new Map();
+  arr.forEach((it,i)=>{ const r=find(i); (groups.get(r)||groups.set(r,[]).get(r)).push(it); });
+  groups.forEach(g=>{ if(g.length<2) return; g.sort((a,b)=>b.size-a.size); g.slice(1).forEach(x=>{ x.dupDrop=true; x.keeper=g[0]; }); });
+}
+function categorize(){
+  findDups();
+  const s=S(); state.cats={};
+  CATS.forEach(c=>{
+    const list=state.items.filter(i=>c.test(i,s));
+    if(c.id==='shot') list.sort((a,b)=>a.mtime-b.mtime); else list.sort((a,b)=>b.size-a.size);
+    state.cats[c.id]=list;
+  });
+}
+function reclaimable(){
+  const set=new Set(); CATS.filter(c=>c.act==='trash').forEach(c=>state.cats[c.id].forEach(i=>set.add(i)));
+  return { n:set.size, bytes:sumSize([...set]) };
+}
+
+/* ========= 네이티브 콜백 ========= */
+function prep(x){
+  return { id:x.i, name:x.n, size:x.s, mtime:x.m, path:x.p, kind:x.v?'video':'image', shot:!!x.sh,
+           lap:x.l, bright:x.b, ar:x.ar, hash:(x.h0!=null&&x.h1!=null)?[x.h0,x.h1]:null, bad:!!x.bad };
+}
+window.onPerm = ok => { state.perm=!!ok; if(ok) scan(); else { toast('사진·동영상 접근을 허용해야 정리할 수 있어요'); render(); } };
+window.onProg = (label,done,total) => setProg(label,done,total);
+window.onItems = arr => { for(const x of arr) state.items.push(prep(x)); };
+window.onScanError = m => toast('스캔 오류: '+m);
+window.onScanDone = () => {
+  state.scanning=false; state.stale=false; state.scanned=state.items.length>0; categorize();
+  if(state.scanned) botSay(summaryText());
+  refreshStorage(); render();
+};
+window.onOpDone = (mode, ids, total, cancelled) => {
+  hideProgress();
+  const set=new Set(ids);
+  if(mode==='trash'){
+    const moved=state.items.filter(i=>set.has(i.id));
+    state.items=state.items.filter(i=>!set.has(i.id)); categorize(); state.view='home'; render();
+    if(!ids.length){ toast('취소했어요'); return; }
+    offerDelete(ids, sumSize(moved), cancelled, total);
+  } else if(mode==='restore'){
+    toast(ids.length?`${ids.length}개 복원했어요`:'취소했어요'); if(ids.length) state.stale=true; nat('listTrash');
+  } else if(mode==='delete'){
+    toast(ids.length?`${ids.length}개를 영구 삭제했어요`:'취소했어요'); nat('listTrash'); refreshStorage(); render();
+  }
+};
+window.onTrash = arr => { state.trash=arr; render(); };
+window.onBackupDir = name => { state.bk=name||state.bk; const pend=state.pendingBackup; state.pendingBackup=false; if(name&&pend) doBackup(); else render(); };
+window.onBackupProg = (d,t) => showProgress('백업 중', d, t);
+window.onBackupInfo = (ok,fail) => { if(fail) toast(`${fail}개는 복사에 실패해서 원본을 그대로 뒀어요`); if(!ok) hideProgress(); };
+window.__back = () => {
+  const m=$('.mask'); if(m&&m.dataset.close){ m.click(); return true; }
+  if(state.view==='detail'){ state.view='home'; render(); return true; }
+  if(state.tab!=='home'){ state.tab='home'; render(); return true; }
+  return false;
+};
+
+/* ========= 동작 ========= */
+function scan(){
+  state.items=[]; state.scanning=true; state.scanned=false; state.view='home'; state.tab='home';
+  state.prog={label:'준비 중',done:0,total:0}; render(); nat('startScan');
+}
+function refreshStorage(){ try{ state.storage=JSON.parse(nat('storage')||'null'); }catch(e){ state.storage=null; } }
+async function offerDelete(ids, bytes, cancelled, total){
+  const extra = cancelled && ids.length<total ? `<br><span class="sub">${total-ids.length}개는 취소되어 그대로 있어요.</span>` : '';
+  const ok = await confirmBox('휴지통으로 옮겼어요',
+    `<b>${ids.length.toLocaleString()}개 · ${fmt(bytes)}</b>를 휴지통에 보관했어요. 30일 안에는 복원할 수 있어요.<br>휴지통에 있는 동안은 <b>저장공간이 아직 늘지 않아요.</b> 지금 바로 용량을 확보하려면 영구 삭제하세요.${extra}`,
+    '지금 영구 삭제', true, '나중에');
+  if(ok) nat('deleteForever', JSON.stringify(ids)); else toast('휴지통 탭에서 언제든 복원·삭제할 수 있어요');
+}
+async function doTrash(){
+  const l=selItems(); if(!l.length) return;
+  if(!await confirmBox('휴지통으로 이동',`<b>${l.length.toLocaleString()}개 · ${fmt(sumSize(l))}</b>를 휴지통으로 옮겨요.<br><span class="sub">다음에 나오는 시스템 확인창에서 “허용”을 눌러주세요.</span>`,'이동')) return;
+  nat('trash', JSON.stringify(l.map(i=>i.id)));
+}
+async function doBackup(){
+  const l=selItems(); if(!l.length) return;
+  if(!state.bk){ state.pendingBackup=true; nat('pickBackupDir'); return; }
+  if(!await confirmBox('백업 후 정리',`<b>${l.length.toLocaleString()}개 · ${fmt(sumSize(l))}</b>를 “${esc(state.bk)}” 폴더에 복사하고, <b>크기 검증이 끝난 파일만</b> 휴지통으로 옮겨요. 복사에 실패한 파일은 그대로 둬요.`,'백업하고 정리')) return;
+  showProgress('백업 중',0,l.length); nat('backup', JSON.stringify(l.map(i=>i.id)));
+}
+
+/* ========= UI 헬퍼 ========= */
+function toast(t){ const d=document.createElement('div'); d.className='toast'; d.textContent=t; document.body.appendChild(d); setTimeout(()=>d.remove(),3000); }
+function confirmBox(title, body, ok, danger, cancelLabel){
+  return new Promise(res=>{
+    const m=document.createElement('div'); m.className='mask'; m.dataset.close='1';
+    m.innerHTML=`<div class="modal"><h3>${esc(title)}</h3><div style="font-size:15px">${body}</div><div class="row" style="margin-top:14px"><button class="btn ghost" data-r="0">${esc(cancelLabel||'취소')}</button><button class="btn ${danger?'danger':''}" data-r="1">${esc(ok)}</button></div></div>`;
+    m.onclick=e=>{ const r=e.target.dataset&&e.target.dataset.r; if(r!==undefined||e.target===m){ m.remove(); res(r==='1'); } };
+    document.body.appendChild(m);
+  });
+}
+function showProgress(label,d,t){
+  let m=$('#pm'); if(!m){ m=document.createElement('div'); m.id='pm'; m.className='mask'; m.innerHTML=`<div class="modal"><h3 id="pml"></h3><div class="bar"><i id="pmb"></i></div></div>`; document.body.appendChild(m); }
+  $('#pml').textContent=`${label} ${d} / ${t}`; $('#pmb').style.width=(t?d/t*100:0)+'%';
+}
+function hideProgress(){ const m=$('#pm'); if(m) m.remove(); }
+function setProg(label,done,total){
+  state.prog={label,done,total};
+  const l=$('#plabel'), b=$('#pbar>i');
+  if(l) l.textContent=label+(total?` ${done.toLocaleString()} / ${total.toLocaleString()}`:'…');
+  if(b) b.style.width=total?(done/total*100)+'%':'8%';
+}
+document.addEventListener('error', e=>{
+  const t=e.target; if(t&&t.tagName==='IMG'){ const d=document.createElement('div'); d.className='fb'; d.textContent=t.dataset.fb||'🖼️'; t.replaceWith(d); }
+}, true);
+
+/* ========= 대화 ========= */
+function botSay(text,cat){ state.msgs.push({who:'bot',text,cat}); }
+function summaryText(){
+  const r=reclaimable(), big=state.cats.large||[];
+  const parts=CATS.filter(c=>c.act==='trash'&&state.cats[c.id].length).sort((a,b)=>sumSize(state.cats[b.id])-sumSize(state.cats[a.id]));
+  let t=`사진·동영상 ${state.items.length.toLocaleString()}개를 살펴봤어요.\n`;
+  t+= r.n? `정리하면 최대 ${fmt(r.bytes)}를 확보할 수 있어요 (${r.n.toLocaleString()}개).` : '지금 바로 정리할 만한 사진은 거의 없어요 👍';
+  if(parts[0]) t+=`\n가장 효과 큰 건 "${parts[0].title}"(${state.cats[parts[0].id].length}개, ${fmt(sumSize(state.cats[parts[0].id]))})예요.`;
+  if(big.length) t+=`\n큰 파일 ${big.length}개(${fmt(sumSize(big))})는 백업 후 정리를 추천해요.`;
+  return t;
+}
+function reply(q){
+  q=q.trim(); if(!q) return;
+  state.msgs.push({who:'me',text:q});
+  if(!state.scanned){ botSay('먼저 홈에서 스캔을 해주세요. 그러면 바로 도와드릴게요!'); return; }
+  const has=(...k)=>k.some(w=>q.includes(w));
+  let id=null;
+  if(has('스크린','캡처','캡쳐')) id='shot';
+  else if(has('흔들','블러','초점')) id='blur';
+  else if(has('중복','비슷','똑같','연사')) id='dup';
+  else if(has('어두','까맣','검은')) id='dark';
+  else if(has('큰','동영상','영상','대용량','백업','용량 많')) id='large';
+  if(id){
+    const c=catDef(id), l=state.cats[id];
+    if(!l.length){ botSay(`${c.title}는 찾지 못했어요 🙌`); return; }
+    let extra='';
+    if(id==='shot'&&has('작년','1년','오래')){ const old=l.filter(i=>Date.now()-i.mtime>365*864e5); extra=`\n그중 1년 넘은 스크린샷은 ${old.length}장(${fmt(sumSize(old))})이에요.`; }
+    botSay(`${c.title} ${l.length.toLocaleString()}개, ${fmt(sumSize(l))}를 찾았어요.${extra}\n${c.act==='backup'?'백업 폴더에 복사한 뒤 정리할 수 있어요.':'휴지통으로 옮기면 30일 안에 복원할 수 있어요.'}`,id);
+  } else if(has('휴지통','복원','되돌')) botSay('휴지통 탭에서 복원하거나 영구 삭제할 수 있어요.');
+  else if(has('추천','뭐','정리','확보','얼마','요약','전부','다')) botSay(summaryText());
+  else botSay('이렇게 물어보세요: "스크린샷 정리해줘", "흔들린 사진 보여줘", "큰 동영상 뭐 있어?", "뭐부터 정리할까?"');
+}
+
+/* ========= 화면 ========= */
+function render(){
+  const app=$('#app'); let h='';
+  if(state.view==='detail') h=viewDetail();
+  else if(state.tab==='home') h=viewHome();
+  else if(state.tab==='chat') h=viewChat();
+  else h=viewTrash();
+  if(state.view!=='detail') h+=tabs();
+  app.innerHTML=h;
+  if(state.tab==='chat'&&state.view!=='detail') scrollTo(0,document.body.scrollHeight);
+  if(state.scanning) setProg(state.prog.label,state.prog.done,state.prog.total);
+}
+function tabs(){
+  const t=(k,i,l)=>`<button class="${state.tab===k?'on':''}" data-act="tab" data-v="${k}"><span>${i}</span>${l}</button>`;
+  return `<nav class="tabs">${t('home','🏠','홈')}${t('chat','💬','대화')}${t('trash','🗑️','휴지통')}</nav>`;
+}
+function storageCard(){
+  const s=state.storage; if(!s||!s.total) return '';
+  const used=s.total-s.free, pct=Math.round(used/s.total*100);
+  return `<div class="card" style="margin-top:14px"><div class="row" style="justify-content:space-between"><b>내 저장공간</b><span class="sub">${fmt(used)} / ${fmt(s.total)} 사용 (${pct}%)</span></div><div class="bar"><i style="width:${pct}%;background:${pct>=90?'var(--danger)':'var(--accent)'}"></i></div><div class="sub" style="margin-top:6px">남은 공간 ${fmt(s.free)}</div></div>`;
+}
+function viewHome(){
+  let h=`<h1>🧹 쓱싹</h1><div class="sub">AI가 골라주면, 쓱 보고 싹 정리해요. 분석은 전부 이 폰 안에서만 이루어져요.</div>`;
+  if(!A) return h+`<div class="note warn" style="margin-top:16px">이 화면은 안드로이드 앱 안에서만 동작해요.</div>`;
+  h+=storageCard();
+  if(state.scanning){
+    return h+`<div class="card"><b id="plabel">준비 중…</b><div class="bar" id="pbar"><i></i></div><button class="btn ghost" data-act="cancel">중단</button></div>`;
+  }
+  if(!state.scanned){
+    if(!state.perm){
+      return h+`<div class="card hero"><div style="font-size:54px">🔒</div><b style="font-size:18px">사진·동영상 접근이 필요해요</b>
+        <div class="sub" style="margin-top:6px">흔들린 사진, 비슷한 사진, 스크린샷, 큰 동영상을 찾기 위해서예요. 사진은 폰 밖으로 나가지 않고, 정리한 파일은 휴지통에서 복원할 수 있어요.</div>
+        <button class="btn" data-act="perm">접근 허용하고 시작</button></div>`;
+    }
+    return h+`<div class="card hero"><div style="font-size:54px">✨</div><b style="font-size:18px">정리할 사진을 찾아볼까요?</b>
+      <div class="sub" style="margin-top:6px">사진이 많으면 처음에는 몇 분 걸려요. 다음부터는 새 사진만 분석해서 빨라요.</div>
+      <button class="btn" data-act="scan">스캔 시작</button></div>${settingsCard()}`;
+  }
+  const r=reclaimable(), total=sumSize(state.items);
+  h+=`<div class="card hero"><div class="sub">정리하면 확보할 수 있는 용량</div><div class="big">${fmt(r.bytes)}</div>
+     <div class="sub">전체 ${state.items.length.toLocaleString()}개 · ${fmt(total)} 중 ${r.n.toLocaleString()}개 정리 대상</div></div>`;
+  if(state.stale) h+=`<div class="note">복원한 파일이 있어요. <b data-act="scan" style="text-decoration:underline">다시 스캔</b>하면 반영돼요.</div>`;
+  h+=`<h2>AI 정리 제안</h2>`;
+  let any=false;
+  CATS.forEach(c=>{
+    const l=state.cats[c.id]; if(!l.length) return; any=true;
+    h+=`<div class="card sug" data-act="open" data-v="${c.id}"><div class="ic">${c.icon}</div><div class="grow"><b>${c.title} ${l.length.toLocaleString()}개</b><span class="sub">${fmt(sumSize(l))} · ${c.act==='backup'?'백업 후 정리 추천':'휴지통으로 이동'}</span></div><span class="chev">›</span></div>`;
+  });
+  if(!any) h+=`<div class="card sub">정리할 만한 항목을 찾지 못했어요. 이미 깔끔해요! ✨</div>`;
+  h+=`<button class="btn ghost" data-act="scan">다시 스캔</button>`;
+  const bad=state.items.filter(i=>i.bad).length;
+  if(bad) h+=`<div class="note">${bad}개 이미지는 열 수 없어 분석에서 제외했어요.</div>`;
+  return h+settingsCard();
+}
+function settingsCard(){
+  const s=state.settings;
+  return `<h2>설정</h2><div class="card">
+    <div class="row wrap" style="justify-content:space-between;margin-bottom:10px"><span>흔들림 판정</span>
+      <select data-set="sens"><option value="strict" ${s.sens==='strict'?'selected':''}>보수적</option><option value="normal" ${s.sens==='normal'?'selected':''}>보통</option><option value="loose" ${s.sens==='loose'?'selected':''}>적극적</option></select></div>
+    <div class="row wrap" style="justify-content:space-between;margin-bottom:10px"><span>큰 파일 기준</span>
+      <select data-set="largeMB">${[20,50,100,300,1000].map(v=>`<option value="${v}" ${+s.largeMB===v?'selected':''}>${v>=1000?'1GB':v+'MB'} 이상</option>`).join('')}</select></div>
+    <div class="row wrap" style="justify-content:space-between"><span>스크린샷 자동 선택</span>
+      <select data-set="shotDays">${[7,30,90,365].map(v=>`<option value="${v}" ${+s.shotDays===v?'selected':''}>${v}일 지난 것</option>`).join('')}</select></div></div>`;
+}
+function viewChat(){
+  if(!state.msgs.length) botSay('안녕하세요! 저는 쓱싹이에요 🧹\n"스크린샷 정리해줘", "큰 동영상 뭐 있어?"처럼 말씀해 보세요.');
+  let h=`<h1>💬 대화</h1><div class="chat" style="margin-top:12px">`;
+  state.msgs.forEach(m=>{
+    h+=`<div class="msg ${m.who}">${esc(m.text)}</div>`;
+    if(m.cat&&state.cats[m.cat]&&state.cats[m.cat].length) h+=`<div class="msg bot" style="padding:8px"><button class="btn sm" data-act="open" data-v="${m.cat}">${catDef(m.cat).icon} ${catDef(m.cat).title} 살펴보기</button></div>`;
+  });
+  h+=`</div><div class="chips">${['뭐부터 정리할까?','스크린샷 정리해줘','흔들린 사진 보여줘','비슷한 사진 찾아줘','큰 동영상 뭐 있어?'].map(q=>`<button data-act="chip" data-v="${esc(q)}">${q}</button>`).join('')}</div>
+  <form class="inp" id="chatform"><input id="chatin" placeholder="무엇을 정리할까요?" autocomplete="off"><button class="btn sm" type="submit">보내기</button></form>`;
+  return h;
+}
+function viewTrash(){
+  let h=`<h1>🗑️ 휴지통</h1><div class="sub">폰의 사진·동영상 휴지통이에요(갤러리 휴지통과 같아요). 30일이 지나면 자동으로 삭제돼요.</div>`;
+  if(state.trash===null){ nat('listTrash'); return h+`<div class="card hero sub" style="margin-top:16px">불러오는 중…</div>`; }
+  const l=state.trash, bytes=l.reduce((a,e)=>a+e.s,0);
+  if(!l.length) return h+`<div class="card hero" style="margin-top:16px"><div style="font-size:48px">✨</div>휴지통이 비어 있어요.</div>`;
+  h+=`<div class="card" style="margin-top:14px"><div class="row"><div class="grow"><b>${l.length}개 · ${fmt(bytes)}</b><div class="sub">비우면 이만큼 용량이 확보돼요</div></div><button class="btn sm alt" data-act="restoreAll">전체 복원</button><button class="btn sm danger" data-act="empty">비우기</button></div></div><div class="card">`;
+  l.slice(0,200).forEach(e=>{
+    const nm=e.n.replace(/^\.trashed-\d+-/,''), left=e.ex?Math.max(0,Math.ceil((e.ex-Date.now())/864e5)):null;
+    h+=`<div class="tr"><div class="th"><img src="t/${e.i}" data-fb="🖼️" alt=""></div><div class="grow"><div class="nm">${esc(nm)}</div><div class="sub">${fmt(e.s)}${left!=null?` · ${left}일 남음`:''}</div></div><button class="btn sm ghost" data-act="restore" data-v="${e.i}">복원</button></div>`;
+  });
+  if(l.length>200) h+=`<div class="sub" style="padding-top:8px">앞의 200개만 표시했어요. 전체 복원/비우기는 모든 항목에 적용돼요.</div>`;
+  return h+`</div>`;
+}
+function viewDetail(){
+  const c=catDef(state.cat), all=state.cats[c.id], list=all.slice(0,state.limit);
+  let h=`<div class="top"><button class="back" data-act="back">‹</button><div class="grow"><b style="font-size:18px">${c.icon} ${c.title}</b><div class="sub">${esc(c.desc)}</div></div></div>
+   <div class="row wrap" style="margin:8px 0"><button class="btn sm ghost" data-act="selAll">전체 선택</button><button class="btn sm ghost" data-act="selNone">선택 해제</button>${c.act==='backup'?`<button class="btn sm ghost" data-act="pickbk">📁 ${state.bk?esc(state.bk):'백업 폴더 선택'}</button>`:''}</div><div class="grid">`;
+  list.forEach(i=>{
+    const on=state.sel.has(i.id), tag=c.id==='dup'&&i.keeper?`<span class="tag">중복</span>`:(i.kind==='video'?`<span class="tag">▶ 동영상</span>`:'');
+    h+=`<div class="cell ${on?'on':''}" data-act="tog" data-v="${esc(i.id)}"><img loading="lazy" src="t/${i.id}" data-fb="${i.kind==='video'?'🎞️':'🖼️'}" alt="">${tag}<div class="ck">${on?'✓':''}</div><div class="sz">${fmt(i.size)} · ${ago(i.mtime)}</div></div>`;
+  });
+  h+=`</div>`;
+  if(all.length>list.length) h+=`<button class="btn ghost" data-act="more">더 보기 (${list.length}/${all.length})</button>`;
+  h+=`<div class="actbar"><div class="in"><div class="sub" id="selinfo" style="margin-bottom:4px"></div><button class="btn" id="actbtn" data-act="${c.act}" style="margin-top:0">${c.act==='backup'?'백업 폴더에 복사하고 정리':'휴지통으로 이동'}</button></div></div>`;
+  setTimeout(updateBar);
+  return h;
+}
+function selItems(){ return state.cats[state.cat].filter(i=>state.sel.has(i.id)); }
+function updateBar(){
+  const l=selItems(), info=$('#selinfo'), b=$('#actbtn'); if(!info) return;
+  info.textContent=l.length?`${l.length.toLocaleString()}개 선택 · ${fmt(sumSize(l))} 확보`:'정리할 항목을 선택하세요';
+  if(b) b.disabled=!l.length;
+}
+function openCat(id){
+  const c=catDef(id), s=S();
+  state.cat=id; state.sel=new Set(state.cats[id].filter(i=>c.pre(i,s)).map(i=>i.id));
+  state.limit=120; state.view='detail'; state.tab='home'; render(); scrollTo(0,0);
+}
+
+/* ========= 이벤트 ========= */
+document.addEventListener('click', async e=>{
+  const el=e.target.closest('[data-act]'); if(!el) return;
+  const a=el.dataset.act, v=el.dataset.v;
+  if(a==='tab'){ state.tab=v; state.view='home'; if(v==='trash'){ state.trash=null; } render(); }
+  else if(a==='perm') nat('requestPermission');
+  else if(a==='scan') scan();
+  else if(a==='cancel') nat('cancelScan');
+  else if(a==='open') openCat(v);
+  else if(a==='back'){ state.view='home'; render(); }
+  else if(a==='selAll'){ state.sel=new Set(state.cats[state.cat].map(i=>i.id)); render(); }
+  else if(a==='selNone'){ state.sel=new Set(); render(); }
+  else if(a==='more'){ state.limit+=120; render(); }
+  else if(a==='tog'){ state.sel.has(v)?state.sel.delete(v):state.sel.add(v); el.classList.toggle('on'); el.querySelector('.ck').textContent=state.sel.has(v)?'✓':''; updateBar(); }
+  else if(a==='trash') await doTrash();
+  else if(a==='backup') await doBackup();
+  else if(a==='pickbk') nat('pickBackupDir');
+  else if(a==='chip'){ reply(v); render(); }
+  else if(a==='restore') nat('restore', JSON.stringify([v]));
+  else if(a==='restoreAll'){ if(await confirmBox('전체 복원',`휴지통의 ${state.trash.length}개 파일을 모두 되돌릴까요?`,'복원')) nat('restore', JSON.stringify(state.trash.map(e=>e.i))); }
+  else if(a==='empty'){
+    if(await confirmBox('휴지통 비우기',`<b>${state.trash.length}개 파일이 영구 삭제</b>되고 복원할 수 없어요.`,'영구 삭제',true) &&
+       await confirmBox('정말 삭제할까요?','마지막 확인이에요. 이 작업은 되돌릴 수 없어요.','네, 삭제합니다',true))
+      nat('deleteForever', JSON.stringify(state.trash.map(e=>e.i)));
+  }
+});
+document.addEventListener('change', e=>{
+  const s=e.target.dataset&&e.target.dataset.set;
+  if(s){ state.settings[s]=e.target.value; saveSettings(); if(state.scanned) categorize(); render(); }
+});
+document.addEventListener('submit', e=>{ if(e.target.id==='chatform'){ e.preventDefault(); reply($('#chatin').value); render(); } });
+
+/* ========= 시작 ========= */
+if(A){
+  state.perm = nat('hasPermission')===true;
+  state.bk = nat('backupName') || '';
+  refreshStorage();
+  if(state.perm) scan(); else render();
+} else render();
+</script>
+</body>
+</html>
